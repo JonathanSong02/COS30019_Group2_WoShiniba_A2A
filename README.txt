@@ -63,10 +63,10 @@ node.py              Search-tree node: state, parent, path cost, depth.
                      Rebuilds the path and checks for cycles on the path.
 algorithms\          One module per search method. Each exposes
                      search(graph) -> (goal_node or None, nodes_created).
-    dfs.py           Depth-first search            (TODO)
+    dfs.py           Depth-first search            (done)
     bfs.py           Breadth-first search          (done)
-    gbfs.py          Greedy best-first search      (TODO)
-    astar.py         A* search                     (TODO)
+    gbfs.py          Greedy best-first search      (done)
+    astar.py         A* search                     (done)
     cus1.py          Custom uninformed search      (TODO)
     cus2.py          Custom informed search        (TODO)
 tests\               Test problem files (test01.txt ... test15.txt)
@@ -97,5 +97,12 @@ Destinations:
 =====================================================================
 7. KNOWN ISSUES / NOTES
 =====================================================================
-- Only BFS is implemented so far. Other methods print
+- CUS1 and CUS2 are not implemented yet. They print
   "Method X is not implemented yet."
+- GBFS and A* order their frontier by (priority, node id, insertion order).
+  When two nodes on different branches tie, this picks the smaller id
+  instead of the one added first, which differs from BFS/DFS. See
+  tests\test06.txt: BFS/DFS return goal 5, A* returns goal 4.
+  To be agreed as a group.
+- tests\expected_results_bfs_dfs.md lists the expected BFS/DFS output
+  for test03 to test07.

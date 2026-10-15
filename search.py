@@ -9,9 +9,10 @@ import sys
 
 from graph import load_graph
 
-from algorithms import bfs, gbfs, astar
+from algorithms import dfs, bfs, gbfs, astar
 
 METHODS = {
+    "DFS": dfs.search,
     "BFS": bfs.search,
     "GBFS": gbfs.search,
     "AS": astar.search,
