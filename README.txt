@@ -67,8 +67,8 @@ algorithms\          One module per search method. Each exposes
     bfs.py           Breadth-first search          (done)
     gbfs.py          Greedy best-first search      (TODO)
     astar.py         A* search                     (TODO)
-    cus1.py          Custom uninformed search      (TODO)
-    cus2.py          Custom informed search        (TODO)
+    cus1.py          IDDFS                         (done)
+    cus2.py          IDA* minimizing moves         (done)
 tests\               Test problem files (test01.txt ... test15.txt)
 PathFinder-test.txt  Sample problem from the assignment specification
 
@@ -97,5 +97,25 @@ Destinations:
 =====================================================================
 7. KNOWN ISSUES / NOTES
 =====================================================================
-- Only BFS is implemented so far. Other methods print
+- BFS, CUS1 and CUS2 are implemented. Other unfinished methods print
   "Method X is not implemented yet."
+
+=====================================================================
+8. MEMBER 3 CUSTOM SEARCH TESTS
+=====================================================================
+tests\member3_01_shallow_vs_deep.txt
+    A depth-1 goal and a depth-2 goal. Expected goal/path: 2 / 1 2.
+    Expected nodes: CUS1 3; CUS2 2.
+tests\member3_02_directed_cycle.txt
+    The path 1 -> 2 -> 1 cycles. Expected goal/path: 3 / 1 2 3.
+    Expected nodes: CUS1 6; CUS2 3.
+tests\member3_03_ascending_tie.txt
+    Equal-depth goals with edges listed in reverse order.
+    Expected goal/path: 2 / 1 2. Expected nodes: CUS1 3; CUS2 2.
+tests\member3_04_moves_over_cost.txt
+    The two-move route costs 200; the three-move route costs 3.
+    Expected goal/path: 5 / 1 2 5. Expected nodes: CUS1 7; CUS2 3.
+tests\member3_05_unreachable.txt
+    A no-edge graph whose destination is disconnected; this also checks the
+    zero maximum-edge-length fallback. Expected: no reachable goal.
+    Expected nodes: CUS1 1; CUS2 1.
