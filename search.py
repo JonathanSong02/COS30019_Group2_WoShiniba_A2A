@@ -8,14 +8,18 @@ where <method> is one of DFS, BFS, GBFS, AS, CUS1, CUS2.
 import sys
 
 from graph import load_graph
-from algorithms import bfs, cus1, cus2
+from algorithms import dfs, bfs, gbfs, astar, cus1, cus2
 
-# Add each algorithm here as it is finished, e.g. "DFS": dfs.search
 METHODS = {
+    "DFS": dfs.search,
     "BFS": bfs.search,
+    "GBFS": gbfs.search,
+    "AS": astar.search,
     "CUS1": cus1.search,
     "CUS2": cus2.search,
 }
+
+
 ALL_METHODS = ("DFS", "BFS", "GBFS", "AS", "CUS1", "CUS2")
 
 
