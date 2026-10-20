@@ -1,7 +1,20 @@
-"""A* search for the COS30019 route-finding assignment.
+"""
+astar.py
+A* search: expand the node with the smallest f(n) = g(n) + h(n), where
+g(n) is the total edge cost from the origin and h(n) is a lower bound on
+the remaining cost to the nearest destination.
 
-Nodes are prioritised by f(n) = g(n) + h(n), where g is the total
-edge cost from the origin and h estimates the minimum remaining cost.
+Team conventions (keep these the same in every algorithm):
+  - nodes_created counts every Node object made, including the root.
+  - The goal test happens when a node is taken OUT of the frontier.
+  - A neighbour already on the current path is skipped (cycle check).
+
+Tie-breaking:
+  The frontier is ordered by (f, creation_order). Children are created in
+  ascending node-id order because graph.neighbours() is sorted, so:
+    - equal-f siblings  -> smaller node id first (it was created first);
+    - equal-f nodes on different branches -> the one added first.
+  The node id is deliberately NOT part of the key (see gbfs.py).
 """
 
 import heapq
@@ -11,11 +24,14 @@ from node import Node
 
 
 def _heuristic_scale(graph):
-    """Make straight-line distance a safe cost lower bound.
+    """Return a factor that keeps straight-line distance admissible.
 
-    Each edge's cost must be at least scale times its geometric length.
-    By the triangle inequality, this also makes the scaled Euclidean
-    distance to the nearest goal admissible and consistent.
+    If any edge costs less than its geometric length, raw Euclidean
+    distance could overestimate the remaining cost. Scaling h by the
+    smallest cost/length ratio (capped at 1) makes every edge cost at
+    least scale * its length, so by the triangle inequality the scaled
+    distance to the nearest goal never overestimates. When every edge
+    costs at least its length (as in the assignment sample), scale = 1.
     """
     scale = 1.0
     for source, neighbours in graph.edges.items():
@@ -28,41 +44,32 @@ def _heuristic_scale(graph):
 
 def search(graph):
     """Return (goal_node, nodes_created), or (None, nodes_created)."""
+    scale = _heuristic_scale(graph)
     root = Node(graph.origin)
     nodes_created = 1
-    creation_order = count()
-    scale = _heuristic_scale(graph)
+    creation_order = count()   # increasing stamp for chronological ties
 
-    # Tie-break first by smaller state ID, then earlier creation order.
-    # Each item: (f, state_id, creation_order, search_node).
-    frontier = [
-        (root.path_cost + scale * graph.heuristic(root.state),
-         root.state, next(creation_order), root)
-    ]
+    def f(search_node):
+        return search_node.path_cost + scale * graph.heuristic(search_node.state)
+
+    # Each frontier item: (f, creation_order, search_node)
+    frontier = [(f(root), next(creation_order), root)]
 
     while frontier:
-        _, _, _, current = heapq.heappop(frontier)
+        _, _, node = heapq.heappop(frontier)
 
-        # The goal test occurs when the node is removed from the frontier.
-        if current.state in graph.destinations:
-            return current, nodes_created
+        # Goal test when the node is removed from the frontier. With an
+        # admissible heuristic this guarantees the lowest-cost path.
+        if node.state in graph.destinations:
+            return node, nodes_created
 
-        for neighbour, edge_cost in graph.neighbours(current.state):
-            # Search-tree cycle checking (do not revisit nodes on this path).
-            if current.on_path(neighbour):
+        for neighbour, edge_cost in graph.neighbours(node.state):
+            # Tree-search cycle check: skip states already on this path.
+            if node.on_path(neighbour):
                 continue
 
-            child = Node(
-                neighbour,
-                current,
-                current.path_cost + edge_cost,
-            )
+            child = Node(neighbour, node, node.path_cost + edge_cost)
             nodes_created += 1
-            estimate = scale * graph.heuristic(child.state)
-            priority = child.path_cost + estimate
-            heapq.heappush(
-                frontier,
-                (priority, child.state, next(creation_order), child),
-            )
+            heapq.heappush(frontier, (f(child), next(creation_order), child))
 
     return None, nodes_created

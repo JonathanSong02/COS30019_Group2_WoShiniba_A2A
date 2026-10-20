@@ -1,8 +1,18 @@
 """
 search.py
-Entry point. Usage:
+Entry point for the Route Finding program.
+
+Usage:
     python search.py <filename> <method>
-where <method> is one of DFS, BFS, GBFS, AS, CUS1, CUS2.
+where <method> is one of DFS, BFS, GBFS, AS, CUS1, CUS2 (not case-sensitive).
+
+Output when a destination is reached:
+    filename method
+    goal number_of_nodes
+    path
+Output when no destination can be reached:
+    filename method
+    No goal is reachable; number_of_nodes
 """
 
 import sys
@@ -10,6 +20,8 @@ import sys
 from graph import load_graph
 from algorithms import dfs, bfs, gbfs, astar, cus1, cus2
 
+# Method name (as typed on the command line) -> search function.
+# Every search function takes a Graph and returns (goal_node or None, nodes_created).
 METHODS = {
     "DFS": dfs.search,
     "BFS": bfs.search,
@@ -20,22 +32,16 @@ METHODS = {
 }
 
 
-ALL_METHODS = ("DFS", "BFS", "GBFS", "AS", "CUS1", "CUS2")
-
-
 def main(argv):
     if len(argv) != 3:
         print("Usage: python search.py <filename> <method>")
-        print("Methods: " + ", ".join(ALL_METHODS))
+        print("Methods: " + ", ".join(METHODS))
         return 1
 
     filename, method = argv[1], argv[2].upper()
 
-    if method not in ALL_METHODS:
-        print(f"Unknown method '{argv[2]}'. Choose from: " + ", ".join(ALL_METHODS))
-        return 1
     if method not in METHODS:
-        print(f"Method {method} is not implemented yet.")
+        print(f"Unknown method '{argv[2]}'. Choose from: " + ", ".join(METHODS))
         return 1
 
     try:

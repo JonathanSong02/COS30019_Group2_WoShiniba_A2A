@@ -68,7 +68,7 @@ def load_graph(filename):
     graph = Graph()
     section = None
 
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, "r", encoding="utf-8-sig") as f:
         for line_no, raw in enumerate(f, start=1):
             line = raw.strip()
             if not line:
