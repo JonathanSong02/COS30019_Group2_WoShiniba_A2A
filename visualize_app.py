@@ -293,12 +293,17 @@ class Viewer:
         root.configure(bg=PAPER)
 
         style = ttk.Style()
+        style.theme_use("clam")                    # same look on Windows and elsewhere
         style.configure(".", font=FONT)
         style.configure("TFrame", background=PAPER)
         style.configure("TLabel", background=PAPER, foreground=INK)
         style.configure("Panel.TFrame", background=PANEL)
         style.configure("Panel.TLabel", background=PANEL, foreground=INK)
         style.configure("Muted.TLabel", background=PANEL, foreground=MUTED)
+        # Make the selected method button clearly stand out.
+        style.configure("Toolbutton", background=PAPER, padding=(6, 4))
+        style.map("Toolbutton", background=[("selected", INK), ("active", GRID)],
+                  foreground=[("selected", PANEL)])
 
         top = ttk.Frame(root, padding=(16, 12, 16, 6))
         top.pack(fill="x")
@@ -308,8 +313,9 @@ class Viewer:
                                   values=[m["file"] for m in self.maps])
         self.combo.pack(side="left")
         self.combo.bind("<<ComboboxSelected>>", self.on_map_selected)
-        self.facts = ttk.Label(top, foreground=MUTED)
-        self.facts.pack(side="left", padx=(18, 0))
+        # Map facts get their own line so long file names never push them off screen.
+        self.facts = ttk.Label(root, foreground=MUTED, padding=(16, 0, 16, 0))
+        self.facts.pack(fill="x")
 
         body = ttk.Frame(root, padding=(16, 4, 16, 16))
         body.pack(fill="both", expand=True)
@@ -397,16 +403,17 @@ class Viewer:
             draw(c)
             ttk.Label(cell, text=text, foreground=MUTED).pack(side="left")
 
+        # Two columns, three rows, so every item fits next to the map.
         item(0, 0, "Origin", lambda c: c.create_oval(9, 4, 23, 18, fill=ORIGIN, outline=""))
         item(1, 0, "Destination", lambda c: (
             c.create_oval(10, 5, 22, 17, fill=PANEL, outline=INK),
             c.create_oval(7, 2, 25, 20, outline=DEST, width=2)))
-        item(2, 0, "One-way edge", lambda c: c.create_line(
+        item(0, 1, "One-way edge", lambda c: c.create_line(
             3, 11, 29, 11, fill=EDGE, width=1.6, arrow="last", arrowshape=(8, 10, 3)))
-        item(0, 1, "Two-way edge, same cost", lambda c: c.create_line(3, 11, 29, 11, fill=EDGE, width=1.6))
-        item(1, 1, "Created by the search, or visited by the route (×n = more than once)",
+        item(1, 1, "Two-way edge, same cost", lambda c: c.create_line(3, 11, 29, 11, fill=EDGE, width=1.6))
+        item(0, 2, "Created or visited (×n = more than once)",
              lambda c: c.create_oval(9, 4, 23, 18, fill=EXPLORED, outline=INK))
-        item(2, 1, "Path returned", lambda c: c.create_line(
+        item(1, 2, "Path returned", lambda c: c.create_line(
             5, 11, 27, 11, fill=MARK_SOFT, width=10, capstyle="round"))
 
     # ---------- State ----------
@@ -583,8 +590,8 @@ class Viewer:
                 cv.create_text(px + R + 4, py - R + 2, anchor="w", font=("Segoe UI", 8),
                                fill=MUTED, text="×" + str(created[n["id"]]))
 
-        self.note.config(text="Some nodes share the same coordinates, so they are spread out "
-                              "slightly here to keep them all visible." if L["spread"] else "")
+        self.note.config(text="Nodes sharing coordinates are spread out slightly so all are visible."
+                         if L["spread"] else "")
 
     def cost_label(self, x, y, cost):
         """Edge cost with a paper-coloured backing so lines do not cross the digits."""
