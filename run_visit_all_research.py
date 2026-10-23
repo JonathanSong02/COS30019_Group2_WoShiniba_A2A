@@ -1,6 +1,6 @@
 """Validate optional research extension against INDEPENDENT Bellman-Ford baseline.
 
-Runs the 15 required tests plus seven extra research-specific test files.
+Runs the 15 required tests plus the extra research-specific test files in research_cases/.
 Writes visit_all_research_results.csv for reproducible report evidence.
 """
 import csv

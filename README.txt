@@ -81,6 +81,13 @@ run_15_testcases.py    Runs every method on every test case and checks
                        the results against the expected outputs.
 A2A_15_Test_Results.csv  Results saved by run_15_testcases.py
 PathFinder-test.txt    Sample problem from the assignment specification
+visit_all.py           Optional research: cheapest route through ALL
+                       destinations (see section 10)
+run_visit_all_research.py  Checks visit_all.py against a Bellman-Ford
+                       baseline; saves visit_all_research_results.csv
+research_cases\        Extra problems for the research extension
+visualize_app.py       Optional study aid: interactive map viewer
+                       (desktop window, tkinter)
 
 ---------------------------------------------------------------------
 5. PROBLEM FILE FORMAT
@@ -162,3 +169,28 @@ test15_large_graph_multi_goal       9 nodes, 16 edges, two destinations
 9. KNOWN ISSUES
 ---------------------------------------------------------------------
 - None known. All six methods pass all 15 test cases.
+
+---------------------------------------------------------------------
+10. OPTIONAL EXTRAS (not part of the six required methods)
+---------------------------------------------------------------------
+Visit all destinations (research):
+
+    python visit_all.py PathFinder-test.txt
+    python run_visit_all_research.py
+
+visit_all.py finds the cheapest route that passes through EVERY
+destination (not every node). run_visit_all_research.py runs it on the
+15 test cases plus the 5 files in research_cases\ and compares each
+result with an independent Bellman-Ford solver.
+
+Map viewer (study aid):
+
+    python visualize_app.py                  all maps
+    python visualize_app.py <file> [<file>]  only the given files
+
+Opens a window that draws each map on a grid, shows each method's goal,
+nodes created, path and cost, and can step through the search tree in
+the order nodes are created. Keys: Left/Right = back/next, Home/End =
+first/last, Space = play/pause. The algorithms are not modified: their
+Node class is swapped for a logging subclass only while the viewer runs
+them.
