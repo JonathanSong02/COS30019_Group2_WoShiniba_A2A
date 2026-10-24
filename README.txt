@@ -1,6 +1,6 @@
 COS30019 Introduction to AI - Assignment 2 Part A: Tree Based Search
 Team: WoShiNiBa (Group 2)
-
+Team Member: Jonathan Song Hua Jin, Darren Lee Kian Yee, Anson Hoo Zhi Xian
 ---------------------------------------------------------------------
 1. REQUIREMENTS
 ---------------------------------------------------------------------
@@ -21,6 +21,7 @@ Open Command Prompt and go into the project folder:
 Then use either form:
 
     python search.py <filename> <method>
+        or
     search <filename> <method>          (uses search.bat)
 
 <filename>  path to a problem file
@@ -28,10 +29,9 @@ Then use either form:
 
 Examples:
     python search.py PathFinder-test.txt BFS
-    search testcases\test04_misleading_heuristic.txt GBFS
+    .\search.bat  testcases\test04_misleading_heuristic.txt GBFS
 
-Do NOT run the files inside algorithms\ directly. They only define a
-search() function; search.py is the program that calls them.
+Do NOT run the files inside algorithms\ directly. They only define a search() function; search.py is the program that calls them.
 
 ---------------------------------------------------------------------
 3. OUTPUT FORMAT
@@ -61,13 +61,17 @@ If no destination can be reached:
 ---------------------------------------------------------------------
 search.py              Entry point. Reads the arguments, loads the problem
                        file, runs the chosen method and prints the result.
+
 search.bat             Wrapper so "search <filename> <method>" works.
+
 graph.py               Graph class and problem-file parser. Stores node
                        coordinates and directed edges, sorts neighbours in
                        ascending order, and provides the straight-line
                        distance heuristic (to the nearest destination).
+
 node.py                Search-tree node: state, parent, path cost, depth.
                        Rebuilds the path and checks for cycles on the path.
+
 algorithms\            One module per method. Each exposes
                        search(graph) -> (goal_node or None, nodes_created).
     dfs.py             Depth-first search (uninformed)
@@ -76,17 +80,25 @@ algorithms\            One module per method. Each exposes
     astar.py           A* search (informed)
     cus1.py            CUS1: iterative deepening DFS (uninformed)
     cus2.py            CUS2: IDA* minimising the number of moves (informed)
+
 testcases\             The 15 test problems (see section 8)
+
 run_15_testcases.py    Runs every method on every test case and checks
                        the results against the expected outputs.
+
 A2A_15_Test_Results.csv  Results saved by run_15_testcases.py
+
 PathFinder-test.txt    Sample problem from the assignment specification
+
 visit_all.py           Optional research: cheapest route through ALL
                        destinations (see section 10)
+
 run_visit_all_research.py  Checks visit_all.py against a Bellman-Ford
                        baseline; saves visit_all_research_results.csv
+
 research_cases\        Extra problems for the research extension
-visualize_app.py       Optional study aid: interactive map viewer
+
+visualize_app.py       Optional study aid: interactive map viewer to help us understand the algorithms better.
                        (desktop window, tkinter)
 
 ---------------------------------------------------------------------
@@ -101,8 +113,7 @@ Origin:
 Destinations:
 5; 4              destinations separated by semicolons
 
-Files saved with a UTF-8 byte-order mark (e.g. by Windows Notepad) are
-also accepted.
+Files saved with a UTF-8 byte-order mark (e.g. by Windows Notepad) are also accepted.
 
 ---------------------------------------------------------------------
 6. IMPLEMENTATION CONVENTIONS (shared by all methods)
@@ -145,33 +156,69 @@ to A2A_15_Test_Results.csv.
 8. TEST CASES (testcases\)
 ---------------------------------------------------------------------
 test01_assignment_sample            The example graph from the spec
+
 test02_direct_vs_indirect_route     Direct edge vs a costlier detour
+
 test03_unreachable_destination      No route to the goal; all methods
                                     must stop and report no goal
+
 test04_misleading_heuristic         Node nearest the goal has a costly
                                     edge; GBFS takes it, A* does not
+
 test05_bidirectional_cycles         Two-way edges everywhere (cycle check)
+
 test06_cycles_dead_end              A cycle plus a dead-end branch
+
 test07_equal_cost_goals_tie         Equal goals; smaller id wins
+
 test08_fewest_moves_vs_lowest_cost  BFS/CUS1/CUS2 and A* reach different
                                     goals
+
 test09_cross_branch_goal_tie        Equal-f goals on different branches;
                                     the earlier-added one wins
+
 test10_diamond_converging_paths     Two routes to the same node
+
 test11_shallow_vs_deep_goal         DFS goes deep, BFS finds shallow goal
+
 test12_origin_is_destination        Zero-move solution
+
 test13_one_way_edges                Directed (one-way) edges
+
 test14_zero_heuristic_gapped_ids    All coordinates equal (h = 0) and
                                     non-consecutive node ids
+
 test15_large_graph_multi_goal       9 nodes, 16 edges, two destinations
 
+======================================================================
+Additional specific research test cases (/research_cases)
+======================================================================
+research01_greedy_trap              Nearest goal (3) is a trap: visiting it
+                                    first makes the rest cost 10+. Cheapest
+                                    route takes the far goal first (cost 4)
+
+research02_transit_goal             Goals 2 and 4 lie on the cheap route to
+                                    goal 5, so they are collected on the way
+                                    instead of taking the direct 1->5 edge
+                                    (cost 20)
+
+research03_must_revisit_hub         Star graph: each goal connects only to
+                                    hub node 1, so the route must pass back
+                                    through the hub (node revisits needed)
+
+research04_zero_cost_and_ties       Every edge costs 0; checks zero-cost
+                                    edges and ties between equal routes
+                                    
+research05_three_goal_ordering      Three goals where visit order matters;
+                                    the direct links between goals (3->6,
+                                    6->5) are expensive (best cost 8)
 ---------------------------------------------------------------------
 9. KNOWN ISSUES
 ---------------------------------------------------------------------
 - None known. All six methods pass all 15 test cases.
 
 ---------------------------------------------------------------------
-10. OPTIONAL EXTRAS (not part of the six required methods)
+10. OPTIONAL EXTRAS 
 ---------------------------------------------------------------------
 Visit all destinations (research):
 
@@ -186,7 +233,7 @@ result with an independent Bellman-Ford solver.
 Map viewer (study aid):
 
     python visualize_app.py                  all maps
-    python visualize_app.py <file> [<file>]  only the given files
+    python visualize_app.py <file> [<file>]  only the selected files
 
 Opens a window that draws each map on a grid, shows each method's goal,
 nodes created, path and cost, and can step through the search tree in
